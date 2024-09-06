@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdio.h>
 #include <math.h>
 
@@ -6,8 +7,15 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-const int SCREEN_WIDTH = 1080;
+const int SCREEN_WIDTH = 1440;
 const int SCREEN_HEIGHT = 720;
+
+const char* vertexShaderSource = "#version330 core\n"
+	"layout (location = 0) in vec3 aPos; \n"
+	"void main() \n"
+	"{"
+	"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0; \n"
+	"}\0";
 
 int main() {
 	printf("Initializing...");
@@ -26,7 +34,43 @@ int main() {
 		return 1;
 	}
 	//Initialization goes here!
-	
+
+	float triangleVertices[] = {
+	-0.5f, -0.5f, 0.0f,
+	0.5f, -0.5f, 0.0f,
+	-0.5f, 0.5f, 0.0f,
+	};
+
+	//VBO means Vertex Buffer Object
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	//Put Data into currently bound VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+
+	//Modern Verison of glBuffer Binding
+	//glNamedBufferData(VBO, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+
+
+
+	unsigned int vertexShader;
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+
+	int success;
+	char infoLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+	if (!success) {
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		printf("Error::Shader::Vertex::Compilation_Failed", infoLog);
+		//std::cout << "Error::Shader::Vertex::Compilation_Failed\n" << infoLog << "\n";
+
+	}
+
+
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
