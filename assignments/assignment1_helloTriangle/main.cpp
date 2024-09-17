@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <ew/external/glad.h>
+//#include <ew/external/glad.h>
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include "Zeben/Shader.h"
 
 const int SCREEN_WIDTH = 1440;
 const int SCREEN_HEIGHT = 720;
@@ -78,6 +79,7 @@ int main() {
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+
 	unsigned int vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -93,7 +95,8 @@ int main() {
 		//std::cout << "Error::Shader::Vertex::Compilation_Failed\n" << infoLog << "\n";
 	}
 
-	unsigned int fragmentShader;
+
+	/*unsigned int fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
@@ -102,9 +105,9 @@ int main() {
 	if (!success) {
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		printf("Error::Shader::Fragment::Compilation_Failed\n%s", infoLog);
-	}
+	}*/
 
-	unsigned int shaderProgram;
+	/*unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
 
 	glAttachShader(shaderProgram, vertexShader);
@@ -114,7 +117,7 @@ int main() {
 	glUseProgram(shaderProgram);
 
 	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	glDeleteShader(fragmentShader);*/
 
 
 
