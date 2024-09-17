@@ -86,10 +86,10 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-
-
-
+        float currentTime = glfwGetTime();
         triangleShader.use();
+        triangleShader.setFloat("time", currentTime);
+        triangleShader.setVec3("offsetPosition", 0.5, 0.5, 0.1);
 		glBindVertexArray(VAO);
 
 		//Draw Call
