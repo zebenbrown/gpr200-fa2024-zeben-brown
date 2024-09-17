@@ -12,23 +12,10 @@ const int SCREEN_WIDTH = 1440;
 const int SCREEN_HEIGHT = 720;
 
 
-const char *vertexShaderSource = R"(#version 330 core
-	layout (location = 0) in vec3 aPos;
-	layout (location = 1) in vec4 aColor;
-	out vec4 Color;
-	void main()
-	{
-	Color = aColor;
-	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-	})";
 
-const char* fragmentShaderSource = R"(#version 330 core
-out vec4 FragColor;
-in vec4 Color;
-void main()
-{
-	FragColor = Color;
-})";
+
+
+
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {
@@ -46,6 +33,8 @@ int main() {
 		return 1;
 	}
 	//Initialization goes here!
+
+    Shader triangleShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 
 	float triangleVertices[] = {
 	//X		Y	  Z		R		G	B		A
@@ -80,44 +69,10 @@ int main() {
 	glEnableVertexAttribArray(1);
 
 
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	if (!success) {
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		printf("Error::Shader::Vertex::Compilation_Failed\n%s", infoLog);
-		//std::cout << "Error::Shader::Vertex::Compilation_Failed\n" << infoLog << "\n";
-	}
 
 
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
 
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		printf("Error::Shader::Fragment::Compilation_Failed\n%s", infoLog);
-	}
-
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	glUseProgram(shaderProgram);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	
 
 
 
@@ -125,18 +80,23 @@ int main() {
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
-		glfwPollEvents();
+
+
 		//Clear framebuffer
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
+
+
+
+        triangleShader.use();
 		glBindVertexArray(VAO);
 
 		//Draw Call
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		//Drawing happens here!
 		glfwSwapBuffers(window);
+        glfwPollEvents();
 	}
 	printf("Shutting down...");
 }
