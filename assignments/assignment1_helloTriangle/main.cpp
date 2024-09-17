@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 
-//#include <ew/external/glad.h>
+#include <ew/external/glad.h>
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -96,7 +96,7 @@ int main() {
 	}
 
 
-	/*unsigned int fragmentShader;
+	unsigned int fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
@@ -105,9 +105,9 @@ int main() {
 	if (!success) {
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		printf("Error::Shader::Fragment::Compilation_Failed\n%s", infoLog);
-	}*/
+	}
 
-	/*unsigned int shaderProgram;
+	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
 
 	glAttachShader(shaderProgram, vertexShader);
@@ -117,7 +117,7 @@ int main() {
 	glUseProgram(shaderProgram);
 
 	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);*/
+	glDeleteShader(fragmentShader);
 
 
 

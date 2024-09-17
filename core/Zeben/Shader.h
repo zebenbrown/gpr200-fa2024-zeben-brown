@@ -8,9 +8,7 @@
 
 
  // include glad to get all the required OpenGL headers
-#include <ew/external/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include "..\ew\external\glad.h"
 
 #include <string>
 #include <fstream>
