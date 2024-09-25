@@ -78,11 +78,18 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
+    //Position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
+    //Color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
-	//Position(XYZ)
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+    //Texture Coordinates
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
 
     //adding a texture
 	unsigned int texture1, texture2;
@@ -101,7 +108,7 @@ int main() {
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, picture);
         glGenerateMipmap(GL_TEXTURE_2D);
-        std::cout << "Image height: " << height << " Image Width: " << width << std::endl;
+        std::cout << "\nImage height: " << height << " Image Width: " << width << std::endl;
     }
     else
     {
@@ -131,13 +138,11 @@ int main() {
     }
     stbi_image_free(picture);
 
+
     myShader.use();
     myShader.setInt("texture1", 0);
     myShader.setInt("texture2", 1);
 
-    float currentTime = glfwGetTime();
-    myShader.setFloat("time", currentTime);
-    myShader.setVec3("offsetPosition", 0.5, 0.5, 0.1);
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 
@@ -152,6 +157,9 @@ int main() {
 
 
 
+        float currentTime = glfwGetTime();
+        myShader.setFloat("time", currentTime);
+        myShader.setVec3("offsetPosition", 0.5, 0.5, 0.1);
 
 
 		glBindVertexArray(VAO);
