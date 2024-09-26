@@ -6,8 +6,8 @@
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include "Zeben/Shader.h"
-#include "ew/external/stb_image.h"
+#include <Zeben/Shader.h>
+#include <ew/external/stb_image.h>
 
 const int SCREEN_WIDTH = 1440;
 const int SCREEN_HEIGHT = 720;
@@ -47,7 +47,7 @@ int main() {
              -0.5f, -0.5f, 0.0f,    1.0f,1.0f,0.0f,       0.0f,0.0f// bottom left
 	};
 
-    unsigned int indices[]
+    unsigned int indices[] =
             {
                 0, 1, 2, //first triangle
                 1, 2, 3 //second triangle
@@ -148,8 +148,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
 
 
 
@@ -158,7 +158,7 @@ int main() {
         myShader.setVec3("offsetPosition", 0.5, 0.5, 0.1);*/
 
         //glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
+        //glBindTexture(GL_TEXTURE_2D, texture1);
 		glBindVertexArray(VAO);
 
 		//Draw Call
