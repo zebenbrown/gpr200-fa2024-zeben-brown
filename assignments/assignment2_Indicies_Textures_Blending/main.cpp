@@ -39,13 +39,12 @@ int main() {
 
 	float Vertices[] = {
               //first triangle
-              //positions                   //colors                      //texture coordinates
-             0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, //top right
-             0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,// bottom right
-              // second triangle
-              //positions                      //colors                         //texture coordinates
-             -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // top left
-             -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f// bottom left
+              //positions                   //colors                                        //texture coordinates
+            //   X        Y        Z            R        G        B                         S        T
+             0.5f,0.5f,0.0f,    1.0f,0.0f,0.0f,                 1.0f,1.0f, //top right
+             0.5f,-0.5f,0.0f,   0.0f,1.0f,0.0f,              1.0f,0.0f,// bottom right
+             -0.5f,0.5f, 0.0f,  0.0f,0.0f,1.0f,            0.0f,1.0f, // top left
+             -0.5f, -0.5f, 0.0f,    1.0f,1.0f,0.0f,       0.0f,0.0f// bottom left
 	};
 
     unsigned int indices[]
@@ -53,9 +52,6 @@ int main() {
                 0, 1, 2, //first triangle
                 1, 2, 3 //second triangle
             };
-
-
-
 
 	//VBO means Vertex Buffer Object
 	//Vertex Data
@@ -99,14 +95,15 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int height, width, nrChannels;
+
     unsigned char *picture = stbi_load("assets/DuckBackground.png", &width, &height, &nrChannels, 0);
     if (picture)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, picture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, picture);
         glGenerateMipmap(GL_TEXTURE_2D);
         std::cout << "\nImage height: " << height << " Image Width: " << width << std::endl;
     }
@@ -116,19 +113,19 @@ int main() {
     }
     stbi_image_free(picture);
 
-    glGenTextures(1, &texture2);
+    /*glGenTextures(1, &texture2);
     glBindTexture(GL_TEXTURE_2D, texture2);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);*/
 
-    picture = stbi_load("assets/Duck Sprite for Graphics Assignment2.png", &width, &height, &nrChannels, 0);
+    /*picture = stbi_load("assets/Duck Sprite for Graphics Assignment2.png", &width, &height, &nrChannels, 0);
     if (picture)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, picture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, picture);
         glGenerateMipmap(GL_TEXTURE_2D);
         std::cout << "Image height: " << height << " Image Width: " << width << std::endl;
     }
@@ -136,12 +133,12 @@ int main() {
     {
         std::cout << "Failed to load texture2" << std::endl;
     }
-    stbi_image_free(picture);
+    stbi_image_free(picture);*/
 
 
     myShader.use();
     myShader.setInt("texture1", 0);
-    myShader.setInt("texture2", 1);
+    //myShader.setInt("texture2", 1);
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -150,18 +147,18 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
+
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
 
 
-        float currentTime = glfwGetTime();
+        /*float currentTime = glfwGetTime();
         myShader.setFloat("time", currentTime);
-        myShader.setVec3("offsetPosition", 0.5, 0.5, 0.1);
+        myShader.setVec3("offsetPosition", 0.5, 0.5, 0.1);*/
 
-
+        //glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
 		glBindVertexArray(VAO);
 
 		//Draw Call
