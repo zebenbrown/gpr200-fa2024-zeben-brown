@@ -49,7 +49,7 @@ int main() {
 
     unsigned int indices[] =
             {
-            0,1,2,//First triangle
+            0,1,3 ,//First triangle
             1,2,3//second triangle
             };
 
