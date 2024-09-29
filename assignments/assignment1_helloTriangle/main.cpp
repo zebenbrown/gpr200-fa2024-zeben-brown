@@ -37,9 +37,9 @@ int main() {
     Shader triangleShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 
 	float triangleVertices[] = {
-	//X		Y	  Z		R		G	B		A
-	-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+	//X		          Y	        Z		  R		    G	      B		    A
+	-0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+	0.5f, -0.5f, 0.0f, 0.5f, 1.0f, 0.0f, 1.0f,
 	0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 	};
 
