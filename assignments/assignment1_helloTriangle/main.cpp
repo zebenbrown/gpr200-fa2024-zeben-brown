@@ -34,7 +34,7 @@ int main() {
 	}
 	//Initialization goes here!
 
-    Shader triangleShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+    Shader triangleShader("assets/spriteVertexShader.vert", "assets/spriteFragmentShader.frag");
 
 	float triangleVertices[] = {
 	//X		          Y	        Z		  R		    G	      B		    A

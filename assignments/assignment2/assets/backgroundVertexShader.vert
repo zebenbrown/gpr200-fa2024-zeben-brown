@@ -6,10 +6,11 @@ layout (location = 2) in vec2 aTextureCoordinates;
 out vec4 Color;
 out vec2 textureCoordinates;
 
+uniform float time;
 void main()
 {
-
 	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
 	Color = aColor;
-	textureCoordinates = vec2(aTextureCoordinates.x, aTextureCoordinates.y);
+	vec2 scrollSpeed = vec2(time * 2, 0);
+	textureCoordinates = aTextureCoordinates + vec2(time * 0.15, 0);
 }

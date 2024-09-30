@@ -16,7 +16,8 @@ set(CORE_INC_DIR
 )
 
 add_library(core STATIC ${CORE_SRC} ${CORE_INC}
-        Zeben/Shader.cpp)
+        Zeben/Shader.cpp
+        Zeben/texture.h)
 
 find_package(OpenGL REQUIRED)
 

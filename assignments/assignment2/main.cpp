@@ -6,7 +6,8 @@
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include "Zeben/Shader.h"
+#include <Zeben/Shader.h>
+#include <Zeben/texture.h>
 #include "../core/ew/external/stb_image.h"
 #include <filesystem>
 
@@ -37,7 +38,8 @@ int main() {
 	}
 	//Initialization goes here!
 
-    Shader backgroundShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+    Shader backgroundShader("assets/backgroundVertexShader.vert", "assets/backgroundFragmentShader.frag");
+    Shader spriteShader("assets/spriteVertexShader.vert", "assets/spriteFragmentShader.frag");
 
     float vertices[] = {
             // positions                          // colors                     // texture coords
@@ -85,33 +87,10 @@ int main() {
     glEnableVertexAttribArray(2);
 
     //load texture
-    unsigned int backgroundTexture;
-    glGenTextures(1, &backgroundTexture);
-    glBindTexture(GL_TEXTURE_2D, backgroundTexture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true);
-
-    unsigned char *backgroundPicture = stbi_load("assets/DuckBackground3.png", &width, &height, &nrChannels, 0);
-    if (backgroundPicture)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, backgroundPicture);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-        std::cout << "Failed: " << stbi_failure_reason() << std::endl;
-        std::cout << "Current Path " << std::filesystem::current_path() << std::endl;
-    }
-    stbi_image_free(backgroundPicture);
-
+    texture backgroundTexture, spriteTexture;
+    unsigned int backgroundTextureName, spriteTextureName;
+    backgroundTexture.load2DTexture(backgroundTextureName, "assets/DuckBackground3.png");
+    spriteTexture.load2DTexture(spriteTextureName, "assets/DuckSprite.png");
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -120,17 +99,30 @@ int main() {
 		//Clear framebuffer
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+        float currentTime = glfwGetTime();
 
-        glBindTexture(GL_TEXTURE_2D, backgroundTexture);
-
-        //float currentTime = glfwGetTime();
         backgroundShader.use();
-        glUniform1i(glGetUniformLocation(backgroundShader.ID, "background"), 0);
-		glBindVertexArray(VAO);
+        backgroundShader.setFloat("time", currentTime);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, backgroundTextureName);
+        glUniform1i(glGetUniformLocation(backgroundShader.ID, "backgroundShader"), 0);
+        glBindVertexArray(VAO);
+
+        //Draw Call
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		//Draw Call
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+        spriteShader.use();
+        spriteShader.setFloat("scale", 0.5);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, spriteTextureName);
+        glUniform1i(glGetUniformLocation(spriteShader.ID, "spriteShader"), 1);
+		glBindVertexArray(VAO);
+        //Draw Call
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 		//Drawing happens here!
 		glfwSwapBuffers(window);
         glfwPollEvents();
