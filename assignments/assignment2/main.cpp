@@ -12,8 +12,8 @@
 #include <filesystem>
 
 
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = 1440;
+const int SCREEN_HEIGHT = 720;
 
 
 
@@ -38,6 +38,8 @@ int main() {
 	}
 	//Initialization goes here!
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Shader backgroundShader("assets/backgroundVertexShader.vert", "assets/backgroundFragmentShader.frag");
     Shader spriteShader("assets/spriteVertexShader.vert", "assets/spriteFragmentShader.frag");
 
@@ -115,9 +117,10 @@ int main() {
 
 
         spriteShader.use();
-        spriteShader.setFloat("scale", 0.5);
+        spriteShader.setFloat("scale", 0.8);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, spriteTextureName);
+
         glUniform1i(glGetUniformLocation(spriteShader.ID, "spriteShader"), 1);
 		glBindVertexArray(VAO);
         //Draw Call

@@ -11,5 +11,10 @@ uniform sampler2D spriteShader;
 
 void main()
 {
-	FragColor = texture(spriteShader, textureCoordinates);
+	vec4 textureColor = texture(spriteShader, textureCoordinates);
+	if (textureColor.a < 0.1)
+	{
+		discard;
+	}
+	FragColor = textureColor;
 }
