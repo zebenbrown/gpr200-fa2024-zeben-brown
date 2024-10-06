@@ -7,7 +7,6 @@ out vec4 Color;
 out vec2 textureCoordinates;
 
 uniform float scale;
-uniform mat4 transform;
 void main()
 {
 
