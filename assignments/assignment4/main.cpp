@@ -27,7 +27,7 @@ int main() {
 		printf("GLFW failed to init!");
 		return 1;
 	}
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello Triangle", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tranformations", NULL, NULL);
 	if (window == NULL) {
 		printf("GLFW failed to create window");
 		return 1;
@@ -104,6 +104,18 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
         float currentTime = glfwGetTime();
 
+        // create transformations
+        glm::mat4 backgroundTransform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+
+        backgroundTransform = glm::translate(backgroundTransform, glm::vec3(0.25f, -0.25f, 0.0f));
+        backgroundTransform = glm::scale(backgroundTransform, glm::vec3(0.5f, 0.5f, 0.0f));
+        backgroundTransform = glm::rotate(backgroundTransform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+
+
+        unsigned int backgroundTransformLocation = glGetUniformLocation(backgroundShader.ID, "transform");
+        glUniformMatrix4fv(backgroundTransformLocation, 1, GL_FALSE, glm::value_ptr(backgroundTransform));
+
         backgroundShader.use();
         backgroundShader.setFloat("time", currentTime);
 
@@ -121,7 +133,7 @@ int main() {
 
 
 
-        spriteShader.use();
+        /*spriteShader.use();
         spriteShader.setFloat("scale", 0.8);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, spriteTextureName);
@@ -129,7 +141,8 @@ int main() {
         glUniform1i(glGetUniformLocation(spriteShader.ID, "spriteShader"), 1);
 		glBindVertexArray(VAO);
         //Draw Call
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);*/
+
 
 		//Drawing happens here!
 		glfwSwapBuffers(window);
