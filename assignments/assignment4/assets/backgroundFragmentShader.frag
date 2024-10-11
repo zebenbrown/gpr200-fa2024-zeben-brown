@@ -1,6 +1,5 @@
 #version 330 core
 
-
 in vec4 Color;
 in vec2 textureCoordinates;
 

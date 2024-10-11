@@ -42,6 +42,7 @@ int main() {
 	glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     Shader backgroundShader("assets/backgroundVertexShader.vert", "assets/backgroundFragmentShader.frag");
     Shader spriteShader("assets/spriteVertexShader.vert", "assets/spriteFragmentShader.frag");
 
@@ -101,7 +102,7 @@ int main() {
 	unsigned int VAO, VBO, EBO;
 	glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    //glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
@@ -132,6 +133,10 @@ int main() {
     backgroundTexture.load2DTexture(backgroundTextureName, "assets/DuckBackground3.png");
     spriteTexture.load2DTexture(spriteTextureName, "assets/DuckSprite.png");
 
+
+    backgroundShader.use();
+    glUniform1i(glGetUniformLocation(backgroundShader.ID, "backgroundShader"), 0);
+
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 
@@ -140,6 +145,12 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         float currentTime = glfwGetTime();
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, backgroundTextureName);
+        backgroundShader.use();
+
+
 
         // create transformations
         glm::mat4 backgroundTransform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
@@ -153,17 +164,9 @@ int main() {
         unsigned int backgroundTransformLocation = glGetUniformLocation(backgroundShader.ID, "transform");
         glUniformMatrix4fv(backgroundTransformLocation, 1, GL_FALSE, glm::value_ptr(backgroundTransform));
 
-        backgroundShader.use();
+
         backgroundShader.setFloat("time", currentTime);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, backgroundTextureName);
-        glUniform1i(glGetUniformLocation(backgroundShader.ID, "backgroundShader"), 0);
-        glBindVertexArray(VAO);
-
-//        glm::mat4 transformBG = glm::mat4(1.0f);
-//        transformBG = glm::translate(transformBG, glm::vec3(0.5f, -0.5f, 0.0f));
-//        transformBG = glm::rotate(transformBG, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
           glm::mat4 modelMatrix = glm::mat4(1);
           glm::mat4 view = glm::mat4(1);
@@ -180,8 +183,9 @@ int main() {
           glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 
           backgroundShader.setMat4("projection", projection);
-        //Draw Call
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+          glBindVertexArray(VAO);
+          //Draw Call
+          glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 
