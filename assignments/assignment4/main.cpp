@@ -40,6 +40,7 @@ int main() {
 	//Initialization goes here!
 
 	glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Shader backgroundShader("assets/backgroundVertexShader.vert", "assets/backgroundFragmentShader.frag");
     Shader spriteShader("assets/spriteVertexShader.vert", "assets/spriteFragmentShader.frag");
@@ -137,7 +138,7 @@ int main() {
 
 		//Clear framebuffer
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         float currentTime = glfwGetTime();
 
         // create transformations
