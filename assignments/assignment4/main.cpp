@@ -90,19 +90,12 @@ int main() {
             -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-    /*unsigned int indices[] =
-            {
-            0,1,3 ,//First triangle
-            1,2,3//second triangle
-            };*/
-
 	//VBO means Vertex Buffer Object
 	//Vertex Data
 	//
-	unsigned int VAO, VBO, EBO;
+	unsigned int VAO, VBO;
 	glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    //glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
@@ -112,26 +105,18 @@ int main() {
 	//Modern Verison of glBuffer Binding
 	//glNamedBufferData(VBO, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
 
-    /*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);*/
-
 	//Position(XYZ)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//Color
+	//Texture Coordinates
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-    /*//Texture Coordinates
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);*/
-
     //load texture
-    texture backgroundTexture, spriteTexture;
-    unsigned int backgroundTextureName, spriteTextureName;
-    backgroundTexture.load2DTexture(backgroundTextureName, "assets/DuckBackground3.png");
-    spriteTexture.load2DTexture(spriteTextureName, "assets/DuckSprite.png");
+    texture backgroundTexture;
+    unsigned int backgroundTextureName;
+    backgroundTexture.load2DTexture(backgroundTextureName, "assets/Oliver texture Resized.jpg");
 
 
     backgroundShader.use();
@@ -159,8 +144,6 @@ int main() {
         backgroundTransform = glm::scale(backgroundTransform, glm::vec3(0.5f, 0.5f, 0.0f));
         backgroundTransform = glm::rotate(backgroundTransform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
-
-
         unsigned int backgroundTransformLocation = glGetUniformLocation(backgroundShader.ID, "transform");
         glUniformMatrix4fv(backgroundTransformLocation, 1, GL_FALSE, glm::value_ptr(backgroundTransform));
 
@@ -186,19 +169,6 @@ int main() {
           glBindVertexArray(VAO);
           //Draw Call
           glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-
-        /*spriteShader.use();
-        spriteShader.setFloat("scale", 0.8);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, spriteTextureName);
-
-        glUniform1i(glGetUniformLocation(spriteShader.ID, "spriteShader"), 1);
-		glBindVertexArray(VAO);
-        //Draw Call
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);*/
-
 
 		//Drawing happens here!
 		glfwSwapBuffers(window);
