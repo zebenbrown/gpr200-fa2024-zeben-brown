@@ -15,8 +15,9 @@ uniform mat4 projection;
 
 void main()
 {
-	gl_Position = projection * view * modelMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+
 	//Color = aColor;
-	vec2 scrollSpeed = vec2(time * 2, 0);
-	textureCoordinates = aTextureCoordinates; //vec2(time * 0.15, 0);
+	//vec2 scrollSpeed = vec2(time * 2, 0);
+	gl_Position = projection * view * modelMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
+	textureCoordinates = vec2(aTextureCoordinates.x, 1.0 - aTextureCoordinates.y); //vec2(time * 0.15, 0);
 }

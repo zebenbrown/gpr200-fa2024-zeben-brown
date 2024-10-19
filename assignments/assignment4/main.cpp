@@ -90,6 +90,19 @@ int main() {
             -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
+    glm::vec3 cubePositions[] {
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(2.0f, 5.0f, -15.0),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
 	//VBO means Vertex Buffer Object
 	//Vertex Data
 	//
@@ -120,7 +133,8 @@ int main() {
 
 
     backgroundShader.use();
-    glUniform1i(glGetUniformLocation(backgroundShader.ID, "backgroundShader"), 0);
+    backgroundShader.setInt("backgroundShader", 0);
+    //glUniform1i(glGetUniformLocation(backgroundShader.ID, "backgroundShader"), 0);
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -135,11 +149,8 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, backgroundTextureName);
         backgroundShader.use();
 
-
-
         // create transformations
         glm::mat4 backgroundTransform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-
         backgroundTransform = glm::translate(backgroundTransform, glm::vec3(0.25f, -0.25f, 0.0f));
         backgroundTransform = glm::scale(backgroundTransform, glm::vec3(0.5f, 0.5f, 0.0f));
         backgroundTransform = glm::rotate(backgroundTransform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -159,16 +170,26 @@ int main() {
           view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0));
           projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
-          unsigned int modelMatrixLocation = glGetUniformLocation(backgroundShader.ID, "modelMatrix");
+          //unsigned int modelMatrixLocation = glGetUniformLocation(backgroundShader.ID, "modelMatrix");
           unsigned int viewLocation = glGetUniformLocation(backgroundShader.ID, "view");
 
-          glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-          glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
+          //glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+          //glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 
           backgroundShader.setMat4("projection", projection);
+          backgroundShader.setMat4("view", view);
           glBindVertexArray(VAO);
-          //Draw Call
-          glDrawArrays(GL_TRIANGLES, 0, 36);
+
+          for(unsigned int i = 0; i < 10; i++)
+          {
+              glm::mat4 model = glm::mat4(1.0f);
+              model = glm::translate(model, cubePositions[i]);
+              float angle = 20 * i;
+              model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+              backgroundShader.setMat4("modelMatrix", model);
+              //Draw Call
+              glDrawArrays(GL_TRIANGLES, 0, 36);
+          }
 
 		//Drawing happens here!
 		glfwSwapBuffers(window);
