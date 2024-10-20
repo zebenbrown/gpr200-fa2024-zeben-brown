@@ -215,7 +215,7 @@ int main() {
 
 void processInput(GLFWwindow *window)
 {
-    const float CAMERA_SPEED = 0.05f;
+    const float CAMERA_SPEED = 0.01f;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -224,7 +224,7 @@ void processInput(GLFWwindow *window)
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        cameraPosition -= CAMERA_SPEED - cameraFront;
+        cameraPosition -= CAMERA_SPEED * cameraFront;
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
