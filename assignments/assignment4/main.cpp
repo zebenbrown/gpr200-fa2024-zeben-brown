@@ -9,31 +9,25 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <Zeben/Shader.h>
 #include <Zeben/texture.h>
+#include <Zeben/Camera.h>
 #include "../core/ew/external/stb_image.h"
 #include <filesystem>
 
 void processInput(GLFWwindow *window);
-void mouse_Callback(GLFWwindow *window, double xPosition, double yPosition);
+void mouse_Callback(GLFWwindow *window, double xPosition_In, double yPosition_In);
 void scroll_Callback(GLFWwindow *window, double xOffset, double yOffset);
+void processInput(GLFWwindow *pWwindow);
 
 const int SCREEN_WIDTH = 1440;
 const int SCREEN_HEIGHT = 720;
 float currentTime = glfwGetTime();
 
-glm::vec3 cameraPosition   = glm::vec3(0.0f, 0.0f,  3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX =  float(SCREEN_WIDTH / 2), lastY = float(SCREEN_HEIGHT / 2);
+bool firstMouse = true;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-float yaw = -90.0f;
-float pitch = 0.0f;
-float lastX =  float(SCREEN_WIDTH / 2), lastY = float(SCREEN_HEIGHT / 2);
-bool firstMouse = true;
-float fieldOfView = 45.0f;
-
-void processInput(GLFWwindow *pWwindow);
 
 int main() {
 	printf("Initializing...");
@@ -41,7 +35,7 @@ int main() {
 		printf("GLFW failed to init!");
 		return 1;
 	}
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tranformations", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Camera", NULL, NULL);
 	if (window == NULL) {
 		printf("GLFW failed to create window");
 		return 1;
@@ -160,8 +154,6 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 
         float currentTime = glfwGetTime();
-
-
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
@@ -171,54 +163,23 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, backgroundTextureName);
         backgroundShader.use();
 
-        glm::mat4 modelMatrix = glm::mat4(1);
-        glm::mat4 view = glm::mat4(1);
-        glm::mat4 projection = glm::mat4(1);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.fieldOfView), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 1000.0f);
+        backgroundShader.setMat4("projection", projection);
 
-        const float RADIUS = 10.0f;
-        float cameraX = sin(currentTime) * RADIUS;
-        float cameraZ = cos(currentTime) * RADIUS;
+        glm::mat4 view = camera.GetViewMatrix();
+        backgroundShader.setMat4("view", view);
 
-        // create transformations
-        /*glm::mat4 backgroundTransform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        backgroundTransform = glm::translate(backgroundTransform, glm::vec3(0.25f, -0.25f, 0.0f));
-        backgroundTransform = glm::scale(backgroundTransform, glm::vec3(0.5f, 0.5f, 0.0f));
-        backgroundTransform = glm::rotate(backgroundTransform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));*/
-
-        /*unsigned int backgroundTransformLocation = glGetUniformLocation(backgroundShader.ID, "transform");
-        glUniformMatrix4fv(backgroundTransformLocation, 1, GL_FALSE, glm::value_ptr(backgroundTransform));*/
-
-
-
-        view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
-
-
-
-
-          modelMatrix = glm::rotate(modelMatrix, currentTime, glm::vec3(0.5f, 1.0f, 0.0f));
-          //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0));
-          projection = glm::perspective(glm::radians(fieldOfView), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
-
-          //unsigned int modelMatrixLocation = glGetUniformLocation(backgroundShader.ID, "modelMatrix");
-          unsigned int viewLocation = glGetUniformLocation(backgroundShader.ID, "view");
-
-          //glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-          //glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
-
-          backgroundShader.setMat4("projection", projection);
-          backgroundShader.setMat4("view", view);
-          glBindVertexArray(VAO);
+        glBindVertexArray(VAO);
 
           for(unsigned int i = 0; i < 10; i++)
           {
               glm::mat4 model = glm::mat4(1.0f);
               model = glm::translate(model, cubePositions[i]);
-              float angle = deltaTime * i;
+              float angle = (currentTime*60);
               model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
               backgroundShader.setMat4("modelMatrix", model);
               //Draw Call
@@ -240,40 +201,32 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    float cameraSpeed = 3.0f * deltaTime;
-
-    glm::vec3 mouseDirection;
-    mouseDirection.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    mouseDirection.y = sin(glm::radians(pitch));
-    mouseDirection.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(mouseDirection);
-
-
-
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        cameraPosition += cameraSpeed * cameraFront;
+        camera.ProcessKeyboard(FORWARD, deltaTime);
     }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        cameraPosition -= cameraSpeed * cameraFront;
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        camera.ProcessKeyboard(LEFT, deltaTime);
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        camera.ProcessKeyboard(RIGHT, deltaTime);
     }
+
 }
 
-void mouse_Callback(GLFWwindow *window, double xPosition, double yPosition)
+void mouse_Callback(GLFWwindow *window, double xPosition_In, double yPosition_In)
 {
+    auto xPosition = static_cast<float>(xPosition_In);
+    auto yPosition = static_cast<float>(yPosition_In);
     if (firstMouse)
     {
         lastX = xPosition;
@@ -286,22 +239,12 @@ void mouse_Callback(GLFWwindow *window, double xPosition, double yPosition)
     lastX = xPosition;
     lastY = yPosition;
 
-    const float SENSITIVITY = 0.1f;
-    xOffset *= SENSITIVITY;
-    yOffset *= SENSITIVITY;
-
-    yaw += xOffset;
-    pitch += yOffset;
-
-    if (pitch > 89.0f) {pitch = 89.0f;}
-    if (pitch < -89.0f) {pitch = -89.0f;}
+    camera.ProcessMouseMovement(xOffset, yOffset);
 
 
 }
 
 void scroll_Callback(GLFWwindow *window, double xOffset, double yOffset)
 {
-    fieldOfView -= (float)yOffset;
-    if (fieldOfView < 1.0f) { fieldOfView = 1.0f;}
-    if (fieldOfView > 45.0f) { fieldOfView = 45.0f;}
+    camera.ProcessMouseScroll(static_cast<float>(yOffset));
 };
