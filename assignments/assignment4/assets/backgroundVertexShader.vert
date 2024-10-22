@@ -11,6 +11,7 @@ uniform mat4 transform;
 uniform mat4 modelMatrix;
 uniform mat4 view;
 uniform mat4 projection;
+uniform float scale;
 
 void main()
 {

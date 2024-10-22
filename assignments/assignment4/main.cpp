@@ -11,7 +11,6 @@
 #include <Zeben/texture.h>
 #include <Zeben/Camera.h>
 #include "../core/ew/external/stb_image.h"
-#include "ew/ewMath/ewMath.h"
 #include <filesystem>
 
 void processInput(GLFWwindow *window);
@@ -58,7 +57,6 @@ int main() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Shader backgroundShader("assets/backgroundVertexShader.vert", "assets/backgroundFragmentShader.frag");
-    Shader spriteShader("assets/spriteVertexShader.vert", "assets/spriteFragmentShader.frag");
 
     float vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -104,18 +102,6 @@ int main() {
             -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-//    glm::vec3 cubePositions[] {
-//        glm::vec3(0.0f, 0.0f, 0.0f),
-//        glm::vec3(2.0f, 5.0f, -15.0),
-//        glm::vec3(-1.5f, -2.2f, -2.5f),
-//        glm::vec3(-3.8f, -2.0f, -12.3f),
-//        glm::vec3( 2.4f, -0.4f, -3.5f),
-//        glm::vec3(-1.7f,  3.0f, -7.5f),
-//        glm::vec3( 1.3f, -2.0f, -2.5f),
-//        glm::vec3( 1.5f,  2.0f, -2.5f),
-//        glm::vec3( 1.5f,  0.2f, -1.5f),
-//        glm::vec3(-1.3f,  1.0f, -1.5f)
-//    };
     glm::vec3 cubePositions[]
     {
         glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
@@ -139,6 +125,7 @@ int main() {
         glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
         glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
     };
+
 	//VBO means Vertex Buffer Object
 	//Vertex Data
 	//
@@ -170,7 +157,6 @@ int main() {
 
     backgroundShader.use();
     backgroundShader.setInt("backgroundShader", 0);
-    //glUniform1i(glGetUniformLocation(backgroundShader.ID, "backgroundShader"), 0);
 
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -195,14 +181,23 @@ int main() {
         glm::mat4 view = camera.GetViewMatrix();
         backgroundShader.setMat4("view", view);
 
+
+        /*float randomScale = ew::RandomRange(0.5f, 5.0f);
+        if (randomScale < 0.1) { randomScale = 1.0f;}*/
+
         glBindVertexArray(VAO);
 
           for(unsigned int i = 0; i < 20; i++)
           {
+              //float randomRotation = ew::RandomRange(45.0f, 90.0f);
               glm::mat4 model = glm::mat4(1.0f);
+              //tried to add the random scale but it was trying to render it in two different places and I cant think of the fix right now
+              //model = glm::scale(model,glm::vec3(randomScale, randomScale, 1));
               model = glm::translate(model, cubePositions[i]);
-              float angle = currentTime*90;
+              //Couldn't get delta time to work properly with rotations
+              float angle = currentTime * 60;//randomRotation * deltaTime;
               model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
               backgroundShader.setMat4("modelMatrix", model);
               //Draw Call
               glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -280,8 +275,6 @@ void mouse_Callback(GLFWwindow *window, double xPosition_In, double yPosition_In
     lastY = yPosition;
 
     camera.ProcessMouseMovement(xOffset, yOffset);
-
-
 }
 
 void scroll_Callback(GLFWwindow *window, double xOffset, double yOffset)

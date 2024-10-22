@@ -51,8 +51,6 @@ void Camera::ProcessMouseMovement(float xOffset, float yOffset, GLboolean constr
     xOffset *= mouseSensitivity;
     yOffset *= mouseSensitivity;
 
-
-
     yaw += xOffset;
     pitch += yOffset;
 
