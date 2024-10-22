@@ -12,14 +12,26 @@
 #include "../core/ew/external/stb_image.h"
 #include <filesystem>
 
+void processInput(GLFWwindow *window);
+void mouse_Callback(GLFWwindow *window, double xPosition, double yPosition);
+void scroll_Callback(GLFWwindow *window, double xOffset, double yOffset);
 
 const int SCREEN_WIDTH = 1440;
 const int SCREEN_HEIGHT = 720;
+float currentTime = glfwGetTime();
 
 glm::vec3 cameraPosition   = glm::vec3(0.0f, 0.0f,  3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+float yaw = -90.0f;
+float pitch = 0.0f;
+float lastX =  float(SCREEN_WIDTH / 2), lastY = float(SCREEN_HEIGHT / 2);
+bool firstMouse = true;
+float fieldOfView = 45.0f;
 
 void processInput(GLFWwindow *pWwindow);
 
@@ -39,6 +51,12 @@ int main() {
 		printf("GLAD Failed to load GL headers");
 		return 1;
 	}
+
+    glfwSetCursorPosCallback(window, mouse_Callback);
+    glfwSetScrollCallback(window, scroll_Callback);
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	//Initialization goes here!
 
 	glEnable(GL_BLEND);
@@ -141,12 +159,18 @@ int main() {
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 
+        float currentTime = glfwGetTime();
+
+
+        deltaTime = currentTime - lastFrame;
+        lastFrame = currentTime;
+
         processInput(window);
 
 		//Clear framebuffer
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        float currentTime = glfwGetTime();
+
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, backgroundTextureName);
@@ -170,8 +194,6 @@ int main() {
         glUniformMatrix4fv(backgroundTransformLocation, 1, GL_FALSE, glm::value_ptr(backgroundTransform));*/
 
 
-        backgroundShader.setFloat("time", currentTime);
-
 
         view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 
@@ -180,7 +202,7 @@ int main() {
 
           modelMatrix = glm::rotate(modelMatrix, currentTime, glm::vec3(0.5f, 1.0f, 0.0f));
           //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0));
-          projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+          projection = glm::perspective(glm::radians(fieldOfView), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
           //unsigned int modelMatrixLocation = glGetUniformLocation(backgroundShader.ID, "modelMatrix");
           unsigned int viewLocation = glGetUniformLocation(backgroundShader.ID, "view");
@@ -196,7 +218,7 @@ int main() {
           {
               glm::mat4 model = glm::mat4(1.0f);
               model = glm::translate(model, cubePositions[i]);
-              float angle = 20 * i;
+              float angle = deltaTime * i;
               model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
               backgroundShader.setMat4("modelMatrix", model);
               //Draw Call
@@ -215,25 +237,71 @@ int main() {
 
 void processInput(GLFWwindow *window)
 {
-    const float CAMERA_SPEED = 0.01f;
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    float cameraSpeed = 3.0f * deltaTime;
+
+    glm::vec3 mouseDirection;
+    mouseDirection.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    mouseDirection.y = sin(glm::radians(pitch));
+    mouseDirection.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(mouseDirection);
+
+
+
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        cameraPosition += CAMERA_SPEED * cameraFront;
+        cameraPosition += cameraSpeed * cameraFront;
     }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        cameraPosition -= CAMERA_SPEED * cameraFront;
+        cameraPosition -= cameraSpeed * cameraFront;
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * CAMERA_SPEED;
+        cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * CAMERA_SPEED;
+        cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
     }
+}
+
+void mouse_Callback(GLFWwindow *window, double xPosition, double yPosition)
+{
+    if (firstMouse)
+    {
+        lastX = xPosition;
+        lastY = yPosition;
+        firstMouse = false;
+    }
+    float xOffset = xPosition - lastX;
+    float yOffset = lastY - yPosition;
+
+    lastX = xPosition;
+    lastY = yPosition;
+
+    const float SENSITIVITY = 0.1f;
+    xOffset *= SENSITIVITY;
+    yOffset *= SENSITIVITY;
+
+    yaw += xOffset;
+    pitch += yOffset;
+
+    if (pitch > 89.0f) {pitch = 89.0f;}
+    if (pitch < -89.0f) {pitch = -89.0f;}
+
+
+}
+
+void scroll_Callback(GLFWwindow *window, double xOffset, double yOffset)
+{
+    fieldOfView -= (float)yOffset;
+    if (fieldOfView < 1.0f) { fieldOfView = 1.0f;}
+    if (fieldOfView > 45.0f) { fieldOfView = 45.0f;}
 };
