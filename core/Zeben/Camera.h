@@ -15,7 +15,9 @@ enum CameraMovement
     BACKWARD,
     LEFT,
     RIGHT,
-    SPRINT
+    SPRINT,
+    UP,
+    DOWN
 };
 
 const float YAW = -90.0f;
