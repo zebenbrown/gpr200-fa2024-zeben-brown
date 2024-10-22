@@ -28,6 +28,10 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
     {
         Position += Right * velocity;
     }
+    if (direction == SPRINT)
+    {
+        Position += Front * (velocity * 2);
+    }
 }
 
 void Camera::ProcessMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch)

@@ -11,6 +11,7 @@
 #include <Zeben/texture.h>
 #include <Zeben/Camera.h>
 #include "../core/ew/external/stb_image.h"
+#include "ew/ewMath/ewMath.h"
 #include <filesystem>
 
 void processInput(GLFWwindow *window);
@@ -20,7 +21,6 @@ void processInput(GLFWwindow *pWwindow);
 
 const int SCREEN_WIDTH = 1440;
 const int SCREEN_HEIGHT = 720;
-float currentTime = glfwGetTime();
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX =  float(SCREEN_WIDTH / 2), lastY = float(SCREEN_HEIGHT / 2);
@@ -104,19 +104,41 @@ int main() {
             -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-    glm::vec3 cubePositions[] {
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 5.0f, -15.0),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3( 2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3( 1.3f, -2.0f, -2.5f),
-        glm::vec3( 1.5f,  2.0f, -2.5f),
-        glm::vec3( 1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
+//    glm::vec3 cubePositions[] {
+//        glm::vec3(0.0f, 0.0f, 0.0f),
+//        glm::vec3(2.0f, 5.0f, -15.0),
+//        glm::vec3(-1.5f, -2.2f, -2.5f),
+//        glm::vec3(-3.8f, -2.0f, -12.3f),
+//        glm::vec3( 2.4f, -0.4f, -3.5f),
+//        glm::vec3(-1.7f,  3.0f, -7.5f),
+//        glm::vec3( 1.3f, -2.0f, -2.5f),
+//        glm::vec3( 1.5f,  2.0f, -2.5f),
+//        glm::vec3( 1.5f,  0.2f, -1.5f),
+//        glm::vec3(-1.3f,  1.0f, -1.5f)
+//    };
+    glm::vec3 cubePositions[]
+    {
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
+        glm::vec3(ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-10.0f, 10.0f), ew::RandomRange(-15.0f, 15.0f)),
     };
-
 	//VBO means Vertex Buffer Object
 	//Vertex Data
 	//
@@ -153,7 +175,7 @@ int main() {
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 
-        float currentTime = glfwGetTime();
+        auto currentTime = static_cast<float>(glfwGetTime());
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
 
@@ -175,11 +197,11 @@ int main() {
 
         glBindVertexArray(VAO);
 
-          for(unsigned int i = 0; i < 10; i++)
+          for(unsigned int i = 0; i < 20; i++)
           {
               glm::mat4 model = glm::mat4(1.0f);
               model = glm::translate(model, cubePositions[i]);
-              float angle = (currentTime*60);
+              float angle = currentTime*90;
               model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
               backgroundShader.setMat4("modelMatrix", model);
               //Draw Call
@@ -199,11 +221,19 @@ int main() {
 void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        {
+            camera.ProcessKeyboard(SPRINT, deltaTime);
+        }
+        else
+        {
+            camera.ProcessKeyboard(FORWARD, deltaTime);
+        }
     }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
