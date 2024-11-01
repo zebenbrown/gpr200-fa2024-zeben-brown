@@ -32,6 +32,11 @@ float lastFrame = 0.0f;
 
 //lighting
 glm::vec3 lightPosition(2.2f, 1.0f, 2.0f);
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+float ambientK = 0.05f;
+float diffuseK = 0.0f;
+float specularK = 0.0f;
+float specularShininess = 2.0f;
 bool cursorLocked = false;
 
 int main() {
@@ -173,7 +178,7 @@ int main() {
         processInput(window);
 
 		//Clear framebuffer
-		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -197,7 +202,12 @@ int main() {
         //Create Window
         ImGui::Begin("Light Settings");
         ImGui::DragFloat3("Light Position", &lightPosition.x, 0.1f);
-        ImGui::Text("Add Settings");
+        ImGui::ColorEdit3("Light Color", &lightColor.x, 0.1f);
+        ImGui::SliderFloat("Ambient K", &ambientK, 0.0f, 1.0f);
+        ImGui::SliderFloat("Diffuse K", &diffuseK, 0.0f, 1.0f);
+        ImGui::SliderFloat("Specular K", &specularK, 0.0f, 1.0f);
+        ImGui::SliderFloat("Specular Shininess", &specularShininess, 2.0f, 1024.0f);
+        ImGui::Text("Mouse Control Toggle is Right Click");
         ImGui::End();
 
         //Render ImGui
@@ -208,9 +218,13 @@ int main() {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, backgroundTextureName);
         backgroundShader.use();
-        backgroundShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        backgroundShader.setVec3("lightColor", lightColor);
         backgroundShader.setVec3("lightPosition", lightPosition);
         backgroundShader.setVec3("viewPosition", camera.Position);
+        backgroundShader.setFloat("ambientK", ambientK);
+        backgroundShader.setFloat("diffuseK", diffuseK);
+        backgroundShader.setFloat("specularK", specularK);
+        backgroundShader.setFloat("specularHighlight", specularShininess);
 
 
         //view projection transformations
@@ -235,7 +249,7 @@ int main() {
         model = glm::translate(model, lightPosition);
         model = glm::scale(model, glm::vec3(0.2f));
         lightCubeShader.setMat4("modelMatrix", model);
-        lightCubeShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        lightCubeShader.setVec3("lightColor", lightColor);
 
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
