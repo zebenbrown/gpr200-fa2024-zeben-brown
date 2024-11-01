@@ -11,7 +11,9 @@
 #include <Zeben/texture.h>
 #include <Zeben/Camera.h>
 #include "../core/ew/external/stb_image.h"
-#include <filesystem>
+#include "imgui.h"
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 void processInput(GLFWwindow *window);
 void mouse_Callback(GLFWwindow *window, double xPosition_In, double yPosition_In);
@@ -30,6 +32,7 @@ float lastFrame = 0.0f;
 
 //lighting
 glm::vec3 lightPosition(2.2f, 1.0f, 2.0f);
+bool cursorLocked = false;
 
 int main() {
 	printf("Initializing...");
@@ -48,10 +51,17 @@ int main() {
 		return 1;
 	}
 
+
+
     glfwSetCursorPosCallback(window, mouse_Callback);
     glfwSetScrollCallback(window, scroll_Callback);
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
 
 	//Initialization goes here!
 
@@ -166,6 +176,35 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            cursorLocked = true;
+        }
+        else
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            firstMouse = true;
+            cursorLocked = false;
+        }
+
+        //Draw ImGui
+        ImGui_ImplGlfw_NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui::NewFrame();
+
+        //Create Window
+        ImGui::Begin("Light Settings");
+        ImGui::DragFloat3("Light Position", &lightPosition.x, 0.1f);
+        ImGui::Text("Add Settings");
+        ImGui::End();
+
+        //Render ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, backgroundTextureName);
         backgroundShader.use();
@@ -257,6 +296,8 @@ void processInput(GLFWwindow *window)
 
 void mouse_Callback(GLFWwindow *window, double xPosition_In, double yPosition_In)
 {
+    if (!cursorLocked) { return; }
+
     auto xPosition = static_cast<float>(xPosition_In);
     auto yPosition = static_cast<float>(yPosition_In);
     if (firstMouse)
