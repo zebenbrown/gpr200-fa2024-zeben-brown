@@ -29,7 +29,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 //lighting
-glm::vec3 lightPosition(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPosition(2.2f, 1.0f, 2.0f);
 
 int main() {
 	printf("Initializing...");
@@ -170,8 +170,9 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, backgroundTextureName);
         backgroundShader.use();
         backgroundShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        backgroundShader.setVec3("lightPosition", 1.2f, 1.0f, 2.0f);
-        backgroundShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        backgroundShader.setVec3("lightPosition", lightPosition);
+        backgroundShader.setVec3("viewPosition", camera.Position);
+
 
         //view projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.fieldOfView), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 1000.0f);
@@ -187,7 +188,6 @@ int main() {
         glBindVertexArray(cubeVAO);
         //Draw Call
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        glGetError();
 
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
@@ -200,13 +200,10 @@ int main() {
 
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        glGetError();
-
 
 		//Drawing happens here!
 		glfwSwapBuffers(window);
         glfwPollEvents();
-
 
 	}
 
