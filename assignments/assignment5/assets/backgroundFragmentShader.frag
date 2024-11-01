@@ -1,13 +1,27 @@
 #version 330 core
 
-in vec2 textureCoordinates;
-
 out vec4 FragColor;
 
-uniform sampler2D backgroundShader;
-uniform sampler2D texture2;
+in vec3 Normal;
+in vec3 FragPosition;
+in vec2 textureCoordinates;
+
+uniform sampler2D texture1;
+uniform vec3 lightPosition;
+uniform vec3 lightColor;
+uniform vec3 objectColor;
 
 void main()
 {
-	FragColor = texture(backgroundShader, textureCoordinates);
+	float ambientStrength = 0.1f;
+	vec3 ambient = ambientStrength * lightColor;
+
+	vec3 norm = normalize(Normal);
+	vec3 lightDirection = normalize(lightPosition - FragPosition);
+
+	float diff = max(dot(norm, lightDirection), 0.0f);
+	vec3 diffuse = diff * lightColor;
+
+	vec3 result = (ambient + diffuse) * vec3(texture(texture1, textureCoordinates)).rgb;
+	FragColor = vec4(result, 1.0f);
 }
