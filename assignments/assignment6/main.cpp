@@ -79,8 +79,8 @@ int main() {
     Shader backgroundShader("assets/backgroundVertexShader.vert", "assets/backgroundFragmentShader.frag");
     Shader lightCubeShader("assets/lightCubeShader.vert", "assets/lightCubeShader.frag");
 
-    TorusGen ring(3.0f, 0.5f, 36, 18, true, 3);
-    ring.printSelf();
+    TorusGen ring(3.0f, 0.5f, 50, 50, true, 3);
+    //ring.printSelf();
     float vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
             0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
@@ -242,7 +242,7 @@ int main() {
         //glBindVertexArray(cubeVAO);
         //Draw Call
         //glDrawArrays(GL_TRIANGLES, 0, 36);
-
+        ring.draw();
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
@@ -255,7 +255,7 @@ int main() {
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        ring.draw();
+
 		//Drawing happens here!
 		glfwSwapBuffers(window);
         glfwPollEvents();

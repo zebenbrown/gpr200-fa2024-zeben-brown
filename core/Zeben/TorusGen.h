@@ -22,7 +22,7 @@ class TorusGen {
 public:
 
     //Constructor
-    TorusGen(float majorRadius = 1.0f, float minorRadius = 1.0f, unsigned int sectorCount = 36, unsigned int sideCount = 18, bool smooth = true, int up =3);
+    TorusGen(float majorRadius = 1.0f, float minorRadius = 1.0f, int sectorCount = 36, int sideCount = 18, bool smooth = true, int up =3);
     //Destructor
     ~TorusGen()
     {

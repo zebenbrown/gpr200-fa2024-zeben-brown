@@ -13,7 +13,7 @@ const unsigned int MIN_SECTOR_COUNT = 3;
 const unsigned int MIN_SIDE_COUNT = 2;
 
 //Constructor
-TorusGen::TorusGen(float majorRadius, float minorRadius, unsigned int sectorCount, unsigned int sideCount, bool smooth,
+TorusGen::TorusGen(float majorRadius, float minorRadius, int sectorCount, int sideCount, bool smooth,
                    int up) : interleavedStride(32)
 {
     set(majorRadius, minorRadius, sectorCount, sideCount, smooth, up);
@@ -128,9 +128,35 @@ void TorusGen::printSelf() const
 void TorusGen::draw() const
 {
     //interleaveed array
-    unsigned int torusVAO, torusVBO;
-    unsigned int torusEBO;
+    unsigned int torusVAO;
     glGenVertexArrays(1, &torusVAO);
+    glBindVertexArray(torusVAO);
+
+    unsigned int torusVBO;
+    glGenBuffers(1, &torusVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, torusVBO);
+    glBufferData(GL_ARRAY_BUFFER, getInterleavedVertexSize(), getInterleavedVertices(), GL_STATIC_DRAW);
+
+    unsigned int torusIBO;
+    glGenBuffers(1, &torusIBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, torusIBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndexCount(), getIndices(), GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+    int stride = getInterleavedStride();
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
+
+    glBindVertexArray(torusVAO);
+
+    glDrawElements(GL_TRIANGLES, getIndexCount(), GL_UNSIGNED_INT, (void*)0);
+
+    glBindVertexArray(0);
+    /*glGenVertexArrays(1, &torusVAO);
     glGenBuffers(1, &torusVBO);
 
     glBindVertexArray(torusVAO);
@@ -156,14 +182,10 @@ void TorusGen::draw() const
 
     glBindVertexArray(0);
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glBindVertexArray(torusVAO);
-    glDrawElements(GL_TRIANGLES, (unsigned int)indices.size(), GL_UNSIGNED_INT, 0);
-
-    glDeleteVertexArrays(1, &torusVAO);
-    glDeleteBuffers(1, &torusVBO);
-    glDeleteBuffers(1, &torusEBO);
+    glDrawElements(GL_TRIANGLES, (unsigned int)indices.size(), GL_UNSIGNED_INT, (void*)0);*/
 }
-
 
 void TorusGen::clearArrays()
 {
@@ -177,6 +199,7 @@ void TorusGen::clearArrays()
 void TorusGen::buildVerticesSmooth()
 {
     const float PI = acos(-1.0);
+
 
     //clear memory of previous arrays
     clearArrays();
@@ -208,6 +231,12 @@ void TorusGen::buildVerticesSmooth()
             y = xy * sinf(sectorAngle);
 
             //add normalized vertex normal first
+            float cx = majorRadius * cosf(sectorAngle);
+            float cy = majorRadius * sinf(sectorAngle);
+
+            nx = (x - cx) * lengthInverse;
+            ny = (y - cy) * lengthInverse;
+            nz = z * lengthInverse;
             nx = x * lengthInverse;
             ny = y * lengthInverse;
             nz = z * lengthInverse;
@@ -223,6 +252,8 @@ void TorusGen::buildVerticesSmooth()
             t = (float)i / sideCount;
             addTextureCoordinate(s, t);
         }
+        std::cout << "\nVertex: (" << x << ", " << y << ", " << z << ")" << std::endl;
+        std::cout << "Normal: (" << nx << ", " << ny << ", " << nz << ")" << std::endl;
     }
 
     //indices
@@ -257,8 +288,7 @@ void TorusGen::buildVerticesSmooth()
     //change up axis from Z-axis if given
     if (this->upAxis != 3)
         changeUpAxis(3, this->upAxis);
-
-}
+    }
 
 void TorusGen::buildVerticesFlat()
 {
