@@ -234,9 +234,9 @@ void TorusGen::buildVerticesSmooth()
             float cx = majorRadius * cosf(sectorAngle);
             float cy = majorRadius * sinf(sectorAngle);
 
-            nx = (x - cx) * lengthInverse;
-            ny = (y - cy) * lengthInverse;
-            nz = z * lengthInverse;
+//            nx = (x - cx) * lengthInverse;
+//            ny = (y - cy) * lengthInverse;
+//            nz = z * lengthInverse;
             nx = x * lengthInverse;
             ny = y * lengthInverse;
             nz = z * lengthInverse;

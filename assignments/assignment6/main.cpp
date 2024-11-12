@@ -79,7 +79,7 @@ int main() {
     Shader backgroundShader("assets/backgroundVertexShader.vert", "assets/backgroundFragmentShader.frag");
     Shader lightCubeShader("assets/lightCubeShader.vert", "assets/lightCubeShader.frag");
 
-    TorusGen ring(3.0f, 0.5f, 50, 50, true, 3);
+    TorusGen ring(3.0f, 0.25f, 3, 2, true, 3);
     //ring.printSelf();
     float vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
