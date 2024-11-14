@@ -13,14 +13,13 @@ const unsigned int MIN_SECTOR_COUNT = 3;
 const unsigned int MIN_SIDE_COUNT = 2;
 
 //Constructor
-TorusGen::TorusGen(float majorRadius, float minorRadius, int sectorCount, int sideCount, bool smooth,
-                   int up) : interleavedStride(32)
+TorusGen::TorusGen(float outerRadius, float innerRadius, int steps, int subDivisions)
 {
-    set(majorRadius, minorRadius, sectorCount, sideCount, smooth, up);
+    buildTorus(outerRadius, innerRadius, steps, subDivisions);
 }
 
 //Setters
-void TorusGen::set(float majorR, float minorR, unsigned int sectors, unsigned int sides, bool smooth,
+/*void TorusGen::set(float majorR, float minorR, int sectors, int sides, bool smooth,
                    int up)
                    {
                         if (majorR > 0)
@@ -42,9 +41,9 @@ void TorusGen::set(float majorR, float minorR, unsigned int sectors, unsigned in
                             buildVerticesSmooth();
                         else
                             buildVerticesFlat();
-                   }
+                   }*/
 
-void TorusGen::setMajorRadius(float majorRadius)
+/*void TorusGen::setMajorRadius(float majorRadius)
 {
     if (majorRadius != this->majorRadius)
         set(majorRadius, minorRadius, sectorCount, sideCount, smooth, upAxis);
@@ -80,10 +79,10 @@ void TorusGen::setSmooth(bool smooth)
         buildVerticesSmooth();
     else
         buildVerticesFlat();
-}
+}*/
 
 //flip the face normals to opposite directions
-void TorusGen::reverseNormals()
+/*void TorusGen::reverseNormals()
 {
     std::size_t i, j;
     std::size_t count = normals.size();
@@ -106,7 +105,7 @@ void TorusGen::reverseNormals()
         indices[i] = indices[i + 2];
         indices[i + 2] = temp;
     }
-}
+}*/
 
 //Print Self
 void TorusGen::printSelf() const
@@ -140,7 +139,7 @@ void TorusGen::draw() const
     unsigned int torusIBO;
     glGenBuffers(1, &torusIBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, torusIBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndexCount(), getIndices(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndexCount() * sizeof(unsigned int), getIndices(), GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -156,35 +155,6 @@ void TorusGen::draw() const
     glDrawElements(GL_TRIANGLES, getIndexCount(), GL_UNSIGNED_INT, (void*)0);
 
     glBindVertexArray(0);
-    /*glGenVertexArrays(1, &torusVAO);
-    glGenBuffers(1, &torusVBO);
-
-    glBindVertexArray(torusVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, torusVBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
-    glGenBuffers(1, &torusEBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, torusEBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-    //Position (X,Y,Z)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    //Normals
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    //Texture Coordinates
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    glBindVertexArray(0);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glBindVertexArray(torusVAO);
-    glDrawElements(GL_TRIANGLES, (unsigned int)indices.size(), GL_UNSIGNED_INT, (void*)0);*/
 }
 
 void TorusGen::clearArrays()
@@ -196,7 +166,7 @@ void TorusGen::clearArrays()
     std::vector<unsigned int>().swap(lineIndices);
 }
 
-void TorusGen::buildVerticesSmooth()
+/*void TorusGen::buildVerticesSmooth()
 {
     const float PI = acos(-1.0);
 
@@ -230,13 +200,6 @@ void TorusGen::buildVerticesSmooth()
             x = xy * cosf(sectorAngle);
             y = xy * sinf(sectorAngle);
 
-            //add normalized vertex normal first
-            float cx = majorRadius * cosf(sectorAngle);
-            float cy = majorRadius * sinf(sectorAngle);
-
-//            nx = (x - cx) * lengthInverse;
-//            ny = (y - cy) * lengthInverse;
-//            nz = z * lengthInverse;
             nx = x * lengthInverse;
             ny = y * lengthInverse;
             nz = z * lengthInverse;
@@ -288,9 +251,9 @@ void TorusGen::buildVerticesSmooth()
     //change up axis from Z-axis if given
     if (this->upAxis != 3)
         changeUpAxis(3, this->upAxis);
-    }
+    }*/
 
-void TorusGen::buildVerticesFlat()
+/*void TorusGen::buildVerticesFlat()
 {
     const float PI = acos(-1.0f);
 
@@ -396,9 +359,9 @@ void TorusGen::buildVerticesFlat()
     //change up-axis from z-axis to the given
     if (this->upAxis != 3)
         changeUpAxis(3, this->upAxis);
-}
+}*/
 
-void TorusGen::buildInterleavedVertices()
+/*void TorusGen::buildInterleavedVertices()
 {
     std::vector<float>().swap(interleavedVertices);
 
@@ -418,9 +381,9 @@ void TorusGen::buildInterleavedVertices()
         interleavedVertices.push_back(textureCoordinates[j]);
         interleavedVertices.push_back(textureCoordinates[j + 1]);
     }
-}
+}*/
 
-void TorusGen::changeUpAxis(int from, int to)
+/*void TorusGen::changeUpAxis(int from, int to)
 {
     //initial transform matrix columns
     float tx[] = {1.0f, 0.0f, 0.0f}; //x-axis (left)
@@ -509,36 +472,36 @@ void TorusGen::changeUpAxis(int from, int to)
         interleavedVertices[j + 4] = normals[i + 1];
         interleavedVertices[j + 5] = normals[i + 2];
     }
-}
+}*/
 
-void TorusGen::addVertex(float x, float y, float z)
+/*void TorusGen::addVertex(float x, float y, float z)
 {
     vertices.push_back(x);
     vertices.push_back(y);
     vertices.push_back(z);
-}
+}*/
 
-void TorusGen::addNormal(float x, float y, float z)
+/*void TorusGen::addNormal(float x, float y, float z)
 {
     normals.push_back(x);
     normals.push_back(y);
     normals.push_back(z);
-}
+}*/
 
-void TorusGen::addTextureCoordinate(float s, float t)
+/*void TorusGen::addTextureCoordinate(float s, float t)
 {
     textureCoordinates.push_back(s);
     textureCoordinates.push_back(t);
-}
+}*/
 
-void TorusGen::addIndices(unsigned int i1, unsigned int i2, unsigned int i3)
+/*void TorusGen::addIndices(unsigned int i1, unsigned int i2, unsigned int i3)
 {
     indices.push_back(i1);
     indices.push_back(i2);
     indices.push_back(i3);
-}
+}*/
 
-std::vector<float> TorusGen::computeFaceNormal(float x1, float y1, float z1,
+/*std::vector<float> TorusGen::computeFaceNormal(float x1, float y1, float z1,
                                                float x2, float y2, float z2,
                                                float x3,float y3, float z3)
 {
@@ -571,94 +534,55 @@ std::vector<float> TorusGen::computeFaceNormal(float x1, float y1, float z1,
         normal[2] = normalZ * lengthInverse;
     }
     return normal;
-}
-/*
-static void createCubeFace(const glm::vec3& normal, float size, MeshData* mesh) {
-    unsigned int startVertex = mesh->vertices.size();
-    glm::vec3 a = glm::vec3(normal.z, normal.x, normal.y); //U axis
-    glm::vec3 b = glm::cross(normal, a); //V axis
-    for (int i = 0; i < 4; i++)
-    {
-        int col = i % 2;
-        int row = i / 2;
-        glm::vec3 position = normal * size * 0.5f;
-        position -= (a + b) * size * 0.5f;
-        position += (a * (float)col + b * (float)row) * size;
-        const glm::vec2 uv = glm::vec2(col, row);
-        mesh->vertices.emplace_back(position,normal,uv);
-    }
-
-    //Indices
-    mesh->indices.emplace_back(startVertex);
-    mesh->indices.emplace_back(startVertex + 1);
-    mesh->indices.emplace_back(startVertex + 3);
-    mesh->indices.emplace_back(startVertex + 3);
-    mesh->indices.emplace_back(startVertex + 2);
-    mesh->indices.emplace_back(startVertex);
-}
-/// <summary>
-/// Creates a cube of uniform size
-/// </summary>
-/// <param name="size">Total width, height, depth</param>
-/// <param name="mesh">MeshData struct to fill. Will be cleared.</param>
-void createCube(float size, MeshData* mesh) {
-    mesh->vertices.reserve(24); //6 x 4 vertices
-    mesh->indices.reserve(36); //6 x 6 indices
-    createCubeFace(glm::vec3{ +0.0f,+0.0f,+1.0f }, size, mesh); //Front
-    createCubeFace(glm::vec3{ +1.0f,+0.0f,+0.0f }, size, mesh); //Right
-    createCubeFace(glm::vec3{ +0.0f,+1.0f,+0.0f }, size, mesh); //Top
-    createCubeFace(glm::vec3{ -1.0f,+0.0f,+0.0f }, size, mesh); //Left
-    createCubeFace(glm::vec3{ +0.0f,-1.0f,+0.0f }, size, mesh); //Bottom
-    createCubeFace(glm::vec3{ +0.0f,+0.0f,-1.0f }, size, mesh); //Back
-    return;
-}
-
-/// <summary>
-/// Creates a subdivided plane along X/Y axes
-/// </summary>
-/// <param name="width">Total width</param>
-/// <param name="height">Total height</param>
-/// <param name="subDivisions">Number of subdivisions</param>
-/// <returns></returns>
-void createPlaneXY(float width, float height, int subDivisions, MeshData* mesh) {
-    mesh->vertices.clear();
-    mesh->indices.clear();
-    mesh->vertices.reserve((subDivisions + 1) * (subDivisions + 1));
-    mesh->indices.reserve(subDivisions * subDivisions * 6);
-    for (size_t row = 0; row <= subDivisions; row++)
-    {
-        for (size_t col = 0; col <= subDivisions; col++)
-        {
-            glm::vec2 uv;
-            uv.x = ((float)col / subDivisions);
-            uv.y = ((float)row / subDivisions);
-            glm::vec3 pos;
-            pos.x = uv.x * width;
-            pos.y = uv.y * height;
-            pos.z = 0;
-            glm::vec3 normal = glm::vec3(0, 0, 1);
-            mesh->vertices.emplace_back(pos,normal,uv);
-        }
-    }
-
-    //Indices
-    for (size_t row = 0; row < subDivisions; row++)
-    {
-        for (size_t col = 0; col < subDivisions; col++)
-        {
-            unsigned int bl = row * (subDivisions + 1) + col;
-            unsigned int br = bl + 1;
-            unsigned int tl = bl + subDivisions + 1;
-            unsigned int tr = tl + 1;
-            //Triangle 1
-            mesh->indices.emplace_back(bl);
-            mesh->indices.emplace_back(br);
-            mesh->indices.emplace_back(tr);
-            //Triangle 2
-            mesh->indices.emplace_back(tr);
-            mesh->indices.emplace_back(tl);
-            mesh->indices.emplace_back(bl);
-        }
-    }
-    return;
 }*/
+
+void TorusGen::buildTorus(float innerRadius, float outerRadius, int steps, int subDivisions)
+{
+    const float PI = acos(-1.0f);
+
+    //ring radius(thick part)
+    float phi = 0.0;
+    float deltaPhi = (2 * PI) / subDivisions;
+    //torus radius
+    float theta = 0.0;
+    float deltaTheta = (2 * PI) / steps;
+
+    //std::vector<glm::vec3> torusVertices;
+
+    for (int stack = 0; stack <= steps; ++stack)
+    {
+        theta = deltaTheta  * stack;
+        for (int slice = 0; slice <= subDivisions; ++slice)
+        {
+            phi = deltaPhi * slice;
+            glm::vec3 v;
+            v.x = cosf(theta) * (outerRadius + cosf(phi) * innerRadius);
+            v.y = sinf(theta) * (outerRadius + cosf(phi) * innerRadius);
+            v.z = sinf(phi) * innerRadius;
+            torusVertices.push_back(v);
+        }
+    }
+
+    //std::vector<unsigned int> torusIndices;
+    for (int stack = 0; stack <= steps - 1; ++stack)
+    {
+        for (int slice = 0; slice <= subDivisions; ++slice)
+        {
+            unsigned int i1 = stack + (slice + 1);
+            unsigned int i2 = (stack + 1) + (slice * subDivisions);
+            unsigned int i3 = stack + ((slice + 1) * subDivisions);
+            unsigned int i4 = (stack + 1) + ((slice + 1) * subDivisions);
+
+            //first triangle
+            torusIndices.push_back(i1);
+            torusIndices.push_back(i3);
+            torusIndices.push_back(i4);
+
+            //second triangle
+            torusIndices.push_back(i1);
+            torusIndices.push_back(i4);
+            torusIndices.push_back(i2);
+
+        }
+    }
+}

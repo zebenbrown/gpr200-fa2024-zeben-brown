@@ -10,6 +10,7 @@
 #include "../ew/external/glad.h"
 #include <GL/gl.h>
 #include <vector>
+#include <GL/gl.h>
 
 //Major Radius(R): distance from origin to the center of the tube
 //Minor Radius(r): radius of the tube
@@ -22,7 +23,7 @@ class TorusGen {
 public:
 
     //Constructor
-    TorusGen(float majorRadius = 1.0f, float minorRadius = 1.0f, int sectorCount = 36, int sideCount = 18, bool smooth = true, int up =3);
+    TorusGen(float outerRadius, float innerRadius, int step, int subDivisions);
     //Destructor
     ~TorusGen()
     {
@@ -36,7 +37,7 @@ unsigned int getSectorCount() const { return sectorCount; }
 unsigned int getSideCount() const { return sideCount; }
 
 //setters
-void set(float majorR, float minorR, unsigned int sectors, unsigned int sides, bool smooth = true, int up = 3);
+void set(float majorR, float minorR, int sectors, int sides, bool smooth = true, int up = 3);
 void setMajorRadius(float radius);
 void setMinorRadius(float radius);
 void setSectorCount(unsigned int sectorCount);
@@ -49,7 +50,7 @@ void reverseNormals();
 unsigned int getVertexCount() const { return (unsigned int)vertices.size() / 3;}
 unsigned int getNormalCount() const { return (unsigned int)normals.size() / 3;}
 unsigned int gettextureCoordinatesCount() const { return (unsigned int)textureCoordinates.size() / 2;}
-unsigned int getIndexCount() const { return (unsigned int)indices.size();}
+unsigned int getIndexCount() const { return (unsigned int)torusIndices.size(); }
 unsigned int getLineIndexCount() const { return (unsigned int)lineIndices.size();}
 unsigned int getTriangleCount() const { return getIndexCount() / 3; }
 unsigned int getVertexSize() const { return (unsigned int)vertices.size() * sizeof(float); }
@@ -58,7 +59,7 @@ unsigned int getTextureCoordinateSize() const { return (unsigned int)textureCoor
 const float* getVertices() const { return vertices.data(); }
 const float* getNormals() const { return normals.data(); }
 const float* getTextureCoordinates() const { return textureCoordinates.data(); }
-const unsigned int* getIndices() const { return indices.data(); }
+const unsigned int* getIndices() const { return torusIndices.data(); }
 const unsigned int* getLineIndices() const { return lineIndices.data(); }
 
 //for interleaved vertices: V/N/T
@@ -79,6 +80,7 @@ void printSelf() const;
 private:
 
     //functions
+    void buildTorus(float outerRadius, float innerRadius, int steps, int subDivisions);
     void buildVerticesSmooth();
     void buildVerticesFlat();
     void buildInterleavedVertices();
@@ -109,6 +111,10 @@ private:
     //interleaved
     std::vector<float> interleavedVertices;
     int interleavedStride;
+
+    //new variables
+    std::vector<glm::vec3> torusVertices;
+    std::vector<unsigned int> torusIndices;
 };
 
 

@@ -6,7 +6,7 @@
 #include <ew/ewMath/ewMath.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include "Zeben/Shader.h"
+#include <Zeben/Shader.h>
 
 const int SCREEN_WIDTH = 1440;
 const int SCREEN_HEIGHT = 720;
