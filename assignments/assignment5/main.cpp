@@ -39,6 +39,13 @@ float specularK = 0.0f;
 float specularShininess = 2.0f;
 bool cursorLocked = false;
 
+struct textCharacter {
+	unsigned int textureID;
+	glm::ivec2 size;
+	glm::ivec2 bearing;
+	unsigned int Advance;
+};
+
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {

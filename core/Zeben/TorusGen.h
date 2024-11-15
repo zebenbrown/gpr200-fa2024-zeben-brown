@@ -30,6 +30,14 @@ public:
         clearArrays();
     }
 
+    struct Vertex
+    {
+        glm::vec3 Position;
+        glm::vec3 Vertex;
+        
+        glm::vec2 uvCoordinates;
+    };
+
 //getters
 float getMajorRadius() const { return majorRadius; }
 float getMinorRadius() const { return minorRadius; }
@@ -113,8 +121,10 @@ private:
     int interleavedStride;
 
     //new variables
-    std::vector<glm::vec3> torusVertices;
+    std::vector<Vertex> torusVertices;
     std::vector<unsigned int> torusIndices;
+
+    unsigned int torusVAO;
 };
 
 
