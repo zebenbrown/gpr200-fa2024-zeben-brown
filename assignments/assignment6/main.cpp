@@ -79,7 +79,7 @@ int main() {
     Shader backgroundShader("assets/backgroundVertexShader.vert", "assets/backgroundFragmentShader.frag");
     Shader lightCubeShader("assets/lightCubeShader.vert", "assets/lightCubeShader.frag");
 
-    TorusGen ring(3.0f, 0.5f, 36, 18);
+    TorusGen ring(0.1f, 3.0f, 36, 36);
     //ring.printSelf();
     float vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
@@ -179,7 +179,8 @@ int main() {
         processInput(window);
 
 		//Clear framebuffer
-		glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+        glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
+		//glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
