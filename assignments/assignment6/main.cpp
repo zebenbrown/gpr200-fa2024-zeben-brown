@@ -41,6 +41,9 @@ float specularK = 0.0f;
 float specularShininess = 2.0f;
 bool cursorLocked = false;
 
+//ring color
+glm::vec3 ringColor(0.3f, 0.4f, 0.9f);
+
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {
@@ -78,8 +81,9 @@ int main() {
 
     Shader backgroundShader("assets/backgroundVertexShader.vert", "assets/backgroundFragmentShader.frag");
     Shader lightCubeShader("assets/lightCubeShader.vert", "assets/lightCubeShader.frag");
+    Shader ringShader("assets/torus.vert", "assets/torus.frag");
 
-    TorusGen ring(0.1f, 3.0f, 36, 36);
+    TorusGen ring(0.1f, 3.0f, 50, 50);
     //ring.printSelf();
     float vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
@@ -179,8 +183,8 @@ int main() {
         processInput(window);
 
 		//Clear framebuffer
-        glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
-		//glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+        //glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -243,13 +247,20 @@ int main() {
         //glBindVertexArray(cubeVAO);
         //Draw Call
         //glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        ringShader.setMat4("projection", projection);
+        ringShader.setMat4("view", view);
         ring.draw();
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
         model = glm::mat4(1.0f);
+        ringShader.setMat4("modelMatrix", model);
         model = glm::translate(model, lightPosition);
         model = glm::scale(model, glm::vec3(0.2f));
+
+        ringShader.setVec3("torusColor", ringColor);
+
         lightCubeShader.setMat4("modelMatrix", model);
         lightCubeShader.setVec3("lightColor", lightColor);
 

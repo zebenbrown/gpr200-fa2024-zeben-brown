@@ -80,13 +80,13 @@ void TorusGen::buildTorus(float innerRadius, float outerRadius, int steps, int s
 
             //first triangle
             torusIndices.push_back(i1);
-            torusIndices.push_back(i2);
             torusIndices.push_back(i3);
+            torusIndices.push_back(i4);
 
             //second triangle
-            torusIndices.push_back(i3);
-            torusIndices.push_back(i2);
+            torusIndices.push_back(i1);
             torusIndices.push_back(i4);
+            torusIndices.push_back(i2);
 
         }
     }
