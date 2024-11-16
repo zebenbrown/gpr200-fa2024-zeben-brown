@@ -42,7 +42,7 @@ float specularShininess = 2.0f;
 bool cursorLocked = false;
 
 //ring color
-glm::vec3 ringColor(0.3f, 0.4f, 0.9f);
+//glm::vec3 ringColor(0.3f, 0.4f, 0.9f);
 
 int main() {
 	printf("Initializing...");
@@ -173,6 +173,8 @@ int main() {
     backgroundShader.use();
     backgroundShader.setInt("texture1", 0);
 
+    ringShader.use();
+    //ringShader.setVec3("torusColor", ringColor);
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 
@@ -244,25 +246,28 @@ int main() {
         glm::mat4 model = glm::mat4(1.0f);
         backgroundShader.setMat4("modelMatrix", model);
 
-        //glBindVertexArray(cubeVAO);
+        glBindVertexArray(cubeVAO);
         //Draw Call
         //glDrawArrays(GL_TRIANGLES, 0, 36);
 
         ringShader.setMat4("projection", projection);
         ringShader.setMat4("view", view);
+
         ring.draw();
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
         model = glm::mat4(1.0f);
-        ringShader.setMat4("modelMatrix", model);
+
         model = glm::translate(model, lightPosition);
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::scale(model, glm::vec3(0.2f));
 
-        ringShader.setVec3("torusColor", ringColor);
-
+        ringShader.setMat4("modelMatrix", model);
         lightCubeShader.setMat4("modelMatrix", model);
         lightCubeShader.setVec3("lightColor", lightColor);
+
+
 
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
