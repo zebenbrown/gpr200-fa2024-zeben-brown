@@ -83,8 +83,8 @@ int main() {
     Shader lightCubeShader("assets/lightCubeShader.vert", "assets/lightCubeShader.frag");
     Shader ringShader("assets/torus.vert", "assets/torus.frag");
 
-    TorusGen ring(0.5f, 3.0f, 200, 200);
-    //ring.printSelf();
+    TorusGen ring(0.05f, 3.0f, 200, 200);
+
     float vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
             0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
@@ -173,7 +173,7 @@ int main() {
     backgroundShader.use();
     backgroundShader.setInt("texture1", 0);
 
-    ringShader.use();
+
     //ringShader.setVec3("torusColor", ringColor);
 	//Render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -250,27 +250,37 @@ int main() {
         //Draw Call
         //glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        ringShader.setMat4("projection", projection);
-        ringShader.setMat4("view", view);
 
-        ring.draw();
+        //ring.draw();
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
+		lightCubeShader.setMat4("modelMatrix", model);
+		lightCubeShader.setVec3("lightColor", lightColor);
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
         model = glm::mat4(1.0f);
 
         model = glm::translate(model, lightPosition);
-        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::scale(model, glm::vec3(0.2f));
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        //model = glm::scale(model, glm::vec3(0.2f));
 
-        ringShader.setMat4("modelMatrix", model);
-        lightCubeShader.setMat4("modelMatrix", model);
-        lightCubeShader.setVec3("lightColor", lightColor);
+		ringShader.use();
+        ringShader.setMat4("projection", projection);
+        ringShader.setMat4("view", view);
+		ringShader.setMat4("modelMatrix", model);
 
 
+		for (int i = 0; i < 5; i++)
+		{
+			ring.draw();
+			model = glm::scale(model, glm::vec3(i * 0.5f));
+			ringShader.setVec3("offset", glm::vec3(i, 0.0f, 0.0f));
+		}
+		//ring.draw();
 
-        glBindVertexArray(lightVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
 
 		//Drawing happens here!
