@@ -102,29 +102,3 @@ void TorusGen::draw() const
 
     glBindVertexArray(0);
 }
-
-//Print Self
-void TorusGen::printSelf() const
-{
-    std::cout << "===== Torus =====" << std::endl;
-    std::cout << "Major Radius: " << majorRadius << std::endl;
-    std::cout << "Minor Radius: " << minorRadius << std::endl;
-    std::cout << "Sector Count: " << sectorCount << std::endl;
-    std::cout << "Side Count: " << sideCount << sideCount << std::endl;
-    std::cout << "Smooth Shading: " << (smooth ? "true" : "false") << std::endl;
-    std::cout << "Up Axis: " << (upAxis == 1 ? "X" : (upAxis == 2 ? "Y" : "Z")) << std::endl;
-    std::cout << "Triangle Count: " << getTriangleCount() << std::endl;
-    std::cout << "Index Count: " << getIndexCount() << std::endl;
-    std::cout << "Vertex Count: " << getVertexCount() << std::endl;
-    std::cout << "Normal Count: " << getNormalCount() << std::endl;
-    std::cout << "Texture Coordinate Count: " << gettextureCoordinatesCount() << std::endl;
-}
-
-void TorusGen::clearArrays()
-{
-    std::vector<float>().swap(vertices);
-    std::vector<float>().swap(normals);
-    std::vector<float>().swap(textureCoordinates);
-    std::vector<unsigned int>().swap(indices);
-    std::vector<unsigned int>().swap(lineIndices);
-}
