@@ -17,7 +17,8 @@ set(CORE_INC_DIR
 
 add_library(core STATIC ${CORE_SRC} ${CORE_INC}
         Zeben/TorusMesh.cpp
-        Zeben/TorusGen.cpp)
+        Zeben/TorusGen.cpp
+        Zeben/textRendering.h)
 
 find_package(OpenGL REQUIRED)
 
